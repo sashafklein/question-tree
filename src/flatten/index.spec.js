@@ -1,68 +1,70 @@
-import flattenTree, { newFlatten } from "./index";
-import mainTree from "../tree";
+import flattenTree from "./index";
 
 const tree = {
-  id: "1",
-  text: "Curabitur fringilla pulvinar massa vel commodo.",
-  response:
+  statement: "Curabitur fringilla pulvinar massa vel commodo.",
+  question:
     "Phasellus vestibulum elementum ante, eget sollicitudin lorem blandit eu.",
-  assertions: [
+  responses: [
     {
-      id: "1.1",
-      text:
+      statement:
         "Integer sit amet magna in turpis placerat hendrerit pellentesque ut diam.",
-      response: "Etiam vitae arcu massa."
+      question: "Etiam vitae arcu massa."
     },
     {
-      id: "1.2",
-      text: "Sed tellus elit, malesuada eu tincidunt in, venenatis in nulla.",
-      response:
+      statement:
+        "Sed tellus elit, malesuada eu tincidunt in, venenatis in nulla.",
+      question:
         "Vestibulum elit enim, sagittis nec vehicula et, accumsan et ex."
     },
     {
-      id: "1.3",
-      text:
+      statement:
         "Nunc nunc lorem, congue interdum leo euismod, imperdiet pellentesque lacus.",
-      response: "Fusce posuere metus lacus, vel faucibus nisi malesuada a. ",
-      assertions: [{ id: "1.3.1", text: "Whatever", response: "Hello" }]
+      question: "Fusce posuere metus lacus, vel faucibus nisi malesuada a. ",
+      responses: [{ statement: "Whatever", question: "Hello" }]
     }
   ]
 };
 
 describe("flattenTree", () => {
   it("flattens the tree", () => {
-    const result = flattenTree([], tree);
+    const result = flattenTree(tree);
+
     expect(result).toEqual([
       {
-        id: "1",
-        response:
+        statement: "Curabitur fringilla pulvinar massa vel commodo.",
+        question:
           "Phasellus vestibulum elementum ante, eget sollicitudin lorem blandit eu.",
-        text: "Curabitur fringilla pulvinar massa vel commodo.",
-        assertionIds: ["1.1", "1.2", "1.3"]
+        id: "1",
+        responseIds: ["1.1", "1.2", "1.3"]
       },
       {
+        statement:
+          "Integer sit amet magna in turpis placerat hendrerit pellentesque ut diam.",
+        question: "Etiam vitae arcu massa.",
         id: "1.1",
-        response: "Etiam vitae arcu massa.",
-        text:
-          "Integer sit amet magna in turpis placerat hendrerit pellentesque ut diam."
+        responseIds: []
       },
       {
-        id: "1.2",
-        response:
+        statement:
+          "Sed tellus elit, malesuada eu tincidunt in, venenatis in nulla.",
+        question:
           "Vestibulum elit enim, sagittis nec vehicula et, accumsan et ex.",
-        text: "Sed tellus elit, malesuada eu tincidunt in, venenatis in nulla."
+        id: "1.2",
+        responseIds: []
       },
       {
-        id: "1.3",
-        response: "Fusce posuere metus lacus, vel faucibus nisi malesuada a. ",
-        text:
+        statement:
           "Nunc nunc lorem, congue interdum leo euismod, imperdiet pellentesque lacus.",
-        assertionIds: ["1.3.1"]
+        question: "Fusce posuere metus lacus, vel faucibus nisi malesuada a. ",
+        id: "1.3",
+        responseIds: ["1.3.1"]
       },
-      { id: "1.3.1", response: "Hello", text: "Whatever" }
+      {
+        statement: "Whatever",
+        question: "Hello",
+        id: "1.3.1",
+        responseIds: []
+      }
     ]);
-
-    const res = newFlatten(mainTree);
-    console.log(JSON.stringify(res, null, 2));
   });
 });

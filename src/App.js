@@ -1,39 +1,54 @@
-import React, { useState } from "react";
-import logo from "./logo.svg";
+import React from "react";
+import Markdown from "react-markdown";
 
 import "./App.css";
 import flattenTree from "./flatten";
 import tree from "./tree";
 
-const flatTree = flattenTree([], tree);
+const flatTree = flattenTree(tree);
 
-const getNode = id => flatTree.find(n => n.id === id);
+const getNode = (id, throwError = true) => {
+  const node = flatTree.find(n => n.id === id);
+  if (!node && throwError) throw new Error(`No node with ID: ${id}`);
+  return node;
+};
+
 function App() {
   const id = window.location.pathname.split("/")[1];
-  const node = getNode(id) || {};
-  const text = node.text || "What is your concern?";
-  const assertions = (node.assertionIds || getNode("1").assertionIds).map(
-    getNode
-  );
-  const response =
-    node.response ||
-    (node.nextId && getNode(node.nextId) && getNode(node.nextId).response);
+  let node = getNode(id, false);
+  let question, statement, responses;
 
-  console.log({ id, node, response, flatTree });
+  if (node) {
+    statement = node.statement;
+    if (node.questionId) {
+      node = getNode(node.questionId);
+    }
+    question = node.question;
+    responses = node.responseIds
+      ? node.responseIds.map(rId => getNode(rId))
+      : [];
+  } else {
+    question = "What is your concern?";
+    statement = "Choose a starting statement";
+    responses = flatTree.filter(n => !n.id.includes("."));
+  }
+
   return (
     <div className="App">
       <pre>
-        <h2>{text}</h2>
-        <h3>{response}</h3>
+        <h2>
+          <Markdown source={question} />
+        </h2>
+        <h3>{statement}</h3>
         <ul>
-          {assertions.map(assertion => (
+          {responses.map(response => (
             <li
-              key={assertion.text}
+              key={response.statement}
               onClick={() => {
-                window.location.replace(assertion.id);
+                window.location.replace(response.id);
               }}
             >
-              {assertion.text}
+              {response.statement}
             </li>
           ))}
         </ul>
