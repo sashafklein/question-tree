@@ -24,9 +24,9 @@ function App() {
       node = getNode(node.questionId);
     }
     question = node.question;
-    responses = node.responseIds
+    responses = node.responseIds.length
       ? node.responseIds.map(rId => getNode(rId))
-      : [];
+      : [{ statement: "Return to the beginning.", responseIds: [""] }];
   } else {
     question = "What is your concern?";
     statement = "Choose a starting statement";
@@ -35,24 +35,21 @@ function App() {
 
   return (
     <div className="App">
-      <pre>
-        <h2>
-          <Markdown source={question} />
-        </h2>
-        <h3>{statement}</h3>
-        <ul>
-          {responses.map(response => (
-            <li
-              key={response.statement}
-              onClick={() => {
-                window.location.replace(response.id);
-              }}
-            >
-              {response.statement}
-            </li>
-          ))}
-        </ul>
-      </pre>
+      <h2>
+        <Markdown source={question} />
+      </h2>
+      <ul>
+        {responses.map(response => (
+          <li
+            key={response.statement}
+            onClick={() => {
+              window.location.replace(response.id);
+            }}
+          >
+            <Markdown source={response.statement} />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

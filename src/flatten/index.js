@@ -8,6 +8,9 @@ const flattenTree = (tree, nextId = "1") => {
     }, []);
   }
 
+  if (tree.responses && !tree.responses.map) {
+    debugger;
+  }
   let flattened = [
     {
       ...omit(tree, ["responses"]),
